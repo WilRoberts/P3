@@ -3,18 +3,42 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <queue>
 
 using std::cout;
 using std::endl;
 using std::string;
 using std::ifstream;
-
+using std::priority_queue;
 const string INPUT_FILE = "input.txt";
 
 struct CharacterNode{
 	CharacterNode * next = nullptr;
 	char key;
 	int frequency = 1;
+	bool addedToTree = false;
+};
+
+class Node{
+public:
+	const int freq;
+protected:
+	Node(int freq): freq(freq) {}
+};
+
+class ParentNode : public Node{
+public:
+	Node * leftChild;
+	Node * rightChild;
+
+	ParentNode(Node * lhs, Node * rhs): Node(lhs->freq + rhs->freq), leftChild(lhs), rightChild(rhs) {}
+};
+
+class LeafNode : public Node{
+public:
+	const char nodesCharacter;
+
+	LeafNode(int freq, char nodesCharacter) : Node(freq), nodesCharacter(nodesCharacter) {}
 };
 
 class List{
@@ -25,7 +49,9 @@ public:
 	CharacterNode * searchList(char c);
 	void countFrequencies(string fileName);
 	void insert(char c);
+	void insert2(int freq, char c2);
 	void displayFrequencies();
+	CharacterNode * getMinimumFrequency();
 };
 
 CharacterNode* List::searchList(char c) {
@@ -80,12 +106,48 @@ void List::insert(char c) {
 	traverser->next = temp;
 }
 
+void List::insert2(int freq, char c2){
+	
+}
+
 void List::displayFrequencies() {
 	CharacterNode * traverser = headptr;
 	while (traverser->next != nullptr) {
 		cout << traverser->key << ": " << traverser->frequency << endl;
 		traverser = traverser->next;
 	}
+}
+
+CharacterNode * List::getMinimumFrequency(){
+	CharacterNode * minNode = headptr;
+	CharacterNode * traverser = headptr;
+
+	while(traverser->next != nullptr) {
+		if(traverser->frequency < minNode->frequency && traverser->addedToTree == false){
+			minNode = traverser;
+		}
+		traverser = traverser->next;
+	}
+	minNode->addedToTree = true;
+	return minNode;
+}
+
+int List::getAvailableNodes(){
+	int numNodes = 0;
+	CharacterNode * traverser = headptr;
+	while(traverser->next != nullptr){
+		if(traverser->addedToTree == false){
+			numNodes++;
+		}
+		traverser = traverser->next;
+	}
+}
+
+Node * BuildTree(){
+	
+	priority_queue<
+
+
 }
 
 int main(){
